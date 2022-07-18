@@ -1,7 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
+import {useEffect, useState} from "react";
 
 function App() {
+  const [message, setMessage] = useState([]);
+  useEffect(() => {
+    fetch("/main").then((response) => {
+      return response.json();
+    }).then(function (data) {
+      setMessage(data);
+    });
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
@@ -9,6 +18,7 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <ul> {message.map((text, index) => <li key={`${index}-${text}`}>{text}</li>)}</ul>
         <a
           className="App-link"
           href="https://reactjs.org"
