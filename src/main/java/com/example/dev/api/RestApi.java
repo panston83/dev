@@ -1,6 +1,10 @@
 package com.example.dev.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.boot.json.JsonParseException;
+import org.springframework.boot.json.JsonParser;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,7 +16,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,6 +29,20 @@ public class RestApi {
 
     @GetMapping("/getkobisData")
     public String callAPI() {
+
+        LocalDate now = LocalDate.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        System.out.println("formatter = " + formatter);
+
+      //  String pastDay = now.minusDays(7);
+        String formattedNow = now.minusDays(1).format(formatter);
+
+        LocalDate parisNow = LocalDate.now(ZoneId.of("Europe/Paris"));
+
+        System.out.println("parisNow = " + parisNow);
+
         HashMap<String, Object> result = new HashMap<String, Object>();
 
         String jsonString = "";
@@ -34,7 +57,9 @@ public class RestApi {
 
         String url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json";
 
-        UriComponents uri = UriComponentsBuilder.fromHttpUrl(url+"?"+"key=430156241533f1d058c603178cc3ca0e&targetDt=20120101").build();
+        String targetDt = formattedNow;
+
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(url+"?"+"key=0d106bc79d921f8dc35ed4ba3a471e11&targetDt=" + targetDt).build();
 
         ResponseEntity<Map> resultMap = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
         result.put("statusCode", resultMap.getStatusCodeValue());
@@ -48,6 +73,9 @@ public class RestApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        JSONParser parser = new JSONParser();
+        JSONObject object = (JSONObject)parser.parse(jsonString);
 
         return jsonString;
     }
