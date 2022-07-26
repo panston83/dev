@@ -10,6 +10,7 @@ import java.util.List;
 public class reactController {
     @GetMapping("main")
     public List<String> main() {
+        System.out.println("여기는 메인");
         return Arrays.asList("안녕하세요", "Hello");
     }
 }

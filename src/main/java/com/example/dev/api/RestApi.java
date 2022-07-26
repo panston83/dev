@@ -1,8 +1,10 @@
 package com.example.dev.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.http.HttpEntity;
@@ -10,12 +12,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,16 +32,14 @@ import java.util.Map;
 @RestController
 public class RestApi {
 
-    @GetMapping("/getkobisData")
+    @GetMapping(value = "/getkobisData")
     public String callAPI() {
 
         LocalDate now = LocalDate.now();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        System.out.println("formatter = " + formatter);
-
-      //  String pastDay = now.minusDays(7);
+        //  String pastDay = now.minusDays(7);
         String formattedNow = now.minusDays(1).format(formatter);
 
         LocalDate parisNow = LocalDate.now(ZoneId.of("Europe/Paris"));
@@ -70,12 +73,21 @@ public class RestApi {
 
         try {
             jsonString = mapper.writeValueAsString(resultMap.getBody());
+            System.out.println("jsonString = " + resultMap.getBody());
+            System.out.println(Charset.defaultCharset().displayName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JSONParser parser = new JSONParser();
-        JSONObject object = (JSONObject)parser.parse(jsonString);
+        JSONParser jsonParser = new JSONParser();
+        try {
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
+            //  JSONArray boxOffice = (JSONArray) jsonObject.get("boxOfficeResult");
+            System.out.println("jsonObject = " + jsonObject.get("boxOfficeResult"));
+            System.out.println("실시간 테스트 테스트");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return jsonString;
     }
