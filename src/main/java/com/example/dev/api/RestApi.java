@@ -1,5 +1,6 @@
 package com.example.dev.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,9 +26,7 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class RestApi {
@@ -72,20 +71,30 @@ public class RestApi {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            jsonString = mapper.writeValueAsString(resultMap.getBody());
-            System.out.println("jsonString = " + resultMap.getBody());
+           // jsonString = mapper.writeValueAsString(resultMap.getBody());
+          //  System.out.println("jsonString = " + resultMap.getBody());
             System.out.println(Charset.defaultCharset().displayName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        JSONParser jsonParser = new JSONParser();
-        try {
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
+            JSONParser jsonParser = new JSONParser();
+            // JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
             //  JSONArray boxOffice = (JSONArray) jsonObject.get("boxOfficeResult");
-            System.out.println("jsonObject = " + jsonObject.get("boxOfficeResult"));
-            System.out.println("실시간 테스트 테스트");
-        } catch (ParseException e) {
+
+            LinkedHashMap boxOfficeResult = (LinkedHashMap) resultMap.getBody().get("boxOfficeResult");
+
+            ArrayList<Map> dayList = (ArrayList<Map>) boxOfficeResult.get("dailyBoxOfficeList");
+
+            LinkedHashMap mDayList = new LinkedHashMap<>();
+
+            for (Map obj : dayList) {
+                mDayList.put(obj.get("rnum"),obj.get("movieNm"));
+            }
+            ObjectMapper movieMapper = new ObjectMapper();
+            jsonString = movieMapper.writeValueAsString(mDayList);
+
+            System.out.println("데이터 = " + jsonString);
+          // System.out.println("jsonObject = " + jsonObject.get("boxOfficeResult"));
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
