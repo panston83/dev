@@ -22,10 +22,16 @@ tasks.withType(JavaCompile) {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
+
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.7.2'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '2.7.2'
+    implementation group: 'org.springframework.data', name: 'spring-data-jdbc', version: '2.4.2'
+//    implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.3.22'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.4.0'
 
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.1'
    // implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.1'
@@ -44,6 +50,7 @@ dependencies {
     // https://mavenlibs.com/maven/dependency/commons-logging/commons-logging
     implementation group: 'commons-logging', name: 'commons-logging', version: '1.2'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 def webappDir = "$projectDir/src/main/reactcome"
