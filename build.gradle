@@ -1,8 +1,17 @@
+// querydsl 추가
+//  (gradle 5.0 이상부터는 옵션을 이렇게 넣어주어야 함)
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'war'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10' // querydsl 사용을 위해 추가된 항목
 }
 
 group = 'com.example'
@@ -51,6 +60,10 @@ dependencies {
     implementation group: 'commons-logging', name: 'commons-logging', version: '1.2'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 def webappDir = "$projectDir/src/main/reactcome"
@@ -95,3 +108,28 @@ task installReact(type: Exec) {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+//  (gradle 5.0 이상부터는 옵션을 이렇게 넣어주어야 함)
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+// querydsl 추가 끝

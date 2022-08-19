@@ -1,11 +1,14 @@
 package com.example.dev.api;
 
+import com.example.dev.endtity.BoxOfficeRepository;
+import com.example.dev.endtity.Boxoffice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.http.HttpEntity;
@@ -30,6 +33,9 @@ import java.util.*;
 
 @RestController
 public class RestApi {
+
+    @Autowired
+    private BoxOfficeRepository boxOfficeRepository;
 
     @GetMapping(value = "/getkobisData")
     public String callAPI() {
@@ -81,17 +87,29 @@ public class RestApi {
 
             LinkedHashMap boxOfficeResult = (LinkedHashMap) resultMap.getBody().get("boxOfficeResult");
 
+            System.out.println(boxOfficeResult);
+
             ArrayList<Map> dayList = (ArrayList<Map>) boxOfficeResult.get("dailyBoxOfficeList");
 
             LinkedHashMap mDayList = new LinkedHashMap<>();
 
+            System.out.println(dayList);
+
             for (Map obj : dayList) {
                 mDayList.put(obj.get("rnum"),obj.get("movieNm"));
+
+                Boxoffice boxoffice = Boxoffice.builder()
+                        .rank(Integer.parseInt((String) obj.get("rnum")))
+                        .name(String.valueOf(obj.get("movieNm")))
+                        .build();
+
+                boxOfficeRepository.save(boxoffice);
             }
             ObjectMapper movieMapper = new ObjectMapper();
             jsonString = movieMapper.writeValueAsString(mDayList);
 
             System.out.println("데이터 = " + jsonString);
+
           // System.out.println("jsonObject = " + jsonObject.get("boxOfficeResult"));
 
         } catch (Exception e) {
