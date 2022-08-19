@@ -64,6 +64,14 @@ dependencies {
     // querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webflux
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.3'
+    // https://mvnrepository.com/artifact/org.projectreactor/reactor-spring
+    implementation group: 'org.projectreactor', name: 'reactor-spring', version: '1.0.1.RELEASE'
+
+    annotationProcessor('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')
 }
 
 def webappDir = "$projectDir/src/main/reactcome"
